@@ -1,4 +1,4 @@
-<h1 align="center">Interview Question For Android</h1>
+[https://www.notion.so/Framework-for-Student-84c8a41f621949fcb3fac6eddf80577a](https://www.notion.so/Framework-for-Student-84c8a41f621949fcb3fac6eddf80577a)
 
 - **Name the components of android?**
     
@@ -160,7 +160,6 @@
     There are two main uses for a Handler: 
     
     1.  To schedule messages and runnables to be executed at some point in the future; and (2) to enqueue an action to be performed on a different thread than your own.
-    2. To enqueue an action to be performed on a different thread than your own. In other words enqueue an action to perform on different thread.
     
     How TO schedule ?
     
@@ -238,10 +237,9 @@
     
     A real world use case of explicit intent is starting an Activity. Example code:
     
-    ```
+    ```java
     val intent = Intent(this, TargetedActivity::class.java)
     context.startActivity(intent)
-    
     ```
     
     Implicit by its definition is something that is not definite. In other words the there is no one answer to how things will happen. (**this is done to shift from app to webpage** )
@@ -705,20 +703,70 @@
     
 - **What is the difference between an Array and an ArrayList and mutable list?**
 - **How is ArrayList implemented internally?**
+    - ArrayList is a resizable array implementation in java.
+    - The backing data structure of ArrayList is an array of Object class
+    - When creating an ArrayList you can provide initial capacity then the array is declared with the given capacity.
+    - The default capacity value is 10. If the initial capacity is not specified by the user then the default capacity is used to create an array of objects.
+    - When an element is added to an ArrayList it first checks whether the new element has room to fill or it needs to grow the size of the internal array, If capacity has to be increased then the new capacity is calculated which is 50% more than the old capacity and the array is increased by that capacity.
 - **How does a HashSet avoid duplicate elements? How does it work internally?**
+    
+    ow as you can see that whenever we create a HashSet, it internally creates a **[HashMap](https://www.geeksforgeeks.org/java-util-hashmap-in-java/)** and if we insert an element into this HashSet using *add()* method, it actually call *put()* method on internally created HashMap object with element you have specified as it’s key and constant Object called **“PRESENT”** as it’s value. So we can say that **a Set achieves uniqueness internally through HashMap**. Now the whole story comes around **[how a HashMap and *put()* method internally works](https://www.geeksforgeeks.org/internal-working-of-hashmap-java/)**.
+    
+    As we know in a **[HashMap](https://www.geeksforgeeks.org/java-util-hashmap-in-java/)** each key is unique and when we call *put(Key, Value)* method, it returns the previous value associated with key, or *null* if there was no mapping for key. So in *add()* method we check the return value of map.put(key, value) method with *null* value.
+    
+    1. If map.put(key, value) returns *null*, then the statement “map.put(e, PRESENT) == null” will return *true* and element is added to the HashSet(internally HashMap).
+    2. If map.put(key, value) returns old value of the key, then the statement “map.put(e, PRESENT) == null” will return *false* and element is not added to the HashSet(internally HashMap).
 - **What is the difference between Thread.run() and Thread.start() ?**
+    
+    [Untitled](https://www.notion.so/a386845efce44b77b76637262598fdda)
+    
 - **Can you override static methods?**
+    
+    **No,** we cannot override static methods because method overriding is based on dynamic binding at runtime and the static methods are bonded using static binding at compile time. So, we cannot override static methods.
+    
+    The calling of method depends upon the type of object that calls the static method. It means:
+    
+    - If we call a static method by using the parent class object, the original static method will be called from the parent class.
+    - If we call a static method by using the child class object, the static method of the child class will be called.
 - **Can you overload static methods?**
+    
+    The answer is Yes. We can overload static methods. But remember that the method signature must be different. For example, consider the following Java program.
+    
 - **Can an interface extend one more interface?**
+    
+    An interface can extend another interface in the same way that a class can extend another class. The extends keyword is used to extend an interface, and the child interface inherits the methods of the parent interface.
+    
 - **How HashMap works internally?**
-- **What is the difference between a comparator and comparable ?**
+- **What is the difference between a comparator and comparable?**
+    
+    ### **Comparable**
+    
+    It uses the compareTo() function for sorting. This is the only method present in the Comparable sorting interface.
+    
+    compareTo(Object O) takes as argument an object and compares it to another of the same type. If an object is a string, you can only compare it to another object of the same type. The same is the case with an int object and so on. compareTo() returns a negative, positive or zero integer value based on the result of the sorting.
+    
+    ### **Comparator**
+    
+    There are two methods to sort elements in Comparator: compare() and equals().
+    
+    compare(Object O1, Object O2) takes into account two arguments as input and provides the desired output. It returns an integer to indicate how the first argument comares with the second.
+    
+    - If O1 is less than O2, it returns a negative integer.
+    - If O1 is greater than O2, it will return a positive integer.
+    - If O1 is equal to O2, it returns 0.
+    
+    equals(Object) takes into account an object as input and compares it to the comparator. It returns True if the Object is equal to the Comparator. It also ensures that the order does not change.
+    
 - **What is the difference between the below 2 string object creation?**
     
-    **String a = “Abc”;**
+    **String a = “Abc”; assign the value** 
     
-    **String b = new String(“Abc”);**
+    **String b = new String(“Abc”);  creating the object** 
     
 - **What is a string pool?**
+    
+    String pool is nothing but a storage area in Java heap where string literals stores. It is also known as String Intern Pool or String Constant Pool. It is just like object allocation. By default, it is empty and privately maintained by the Java String class.
+    
 - **What is the finalize() method in Object class?**
     
     The finalize() method of Object class is a method that the Garbage Collector always calls just before the deletion/destroying the object which is eligible for Garbage Collection, so as to perform clean-up activity. Clean-up activity means closing the resources associated with that object like Database Connection, Network Connection or we can say resource de-allocation. Remember it is not a reserved keyword. Once the finalize method completes immediately Garbage Collector destroy that object.
@@ -756,7 +804,7 @@
     
 - **Difference between throw and throws?**
     - The throw and throws is the concept of exception handling where the throw keyword throw the exception explicitly from a method or a block of code whereas the throws keyword is used in signature of the method.
-    - 
+    - [https://www.javatpoint.com/difference-between-throw-and-throws-in-java](https://www.javatpoint.com/difference-between-throw-and-throws-in-java)
 - **What is a finally block in try-catch?**
     
     A catch -block contains statements that specify what to do if an exception is thrown in the try -block. ... The finally -block will always execute after the try -block and catch -block(s) have finished executing. It always executes, regardless of whether an exception was thrown or caught. A finally block of code always executes, irrespective of occurrence of an Exception. Using a finally block allows you to run any cleanup-type statements that you want to execute, no matter what happens in the protected code.
@@ -801,8 +849,8 @@
     
 - **What is the parent class of all the classes?**
     - The Object class is the parent class of all the classes in java by default as it's the topmost class of java.
-    - If a Class does not extend any other class then it is direct child class of Object and if extends other class then it is an indirectly derived. Therefore the Object class methods are available to all Java classes. Hence Object class acts as a root of inheritance hierarchy in any Java Program
-    - lang. Object class is the super base class of all Java classes. Every other Java classes descends from Object
+    - If a class does not extend any other class then it is a direct child class of Object and if extends another class then it is indirectly derived. Therefore the Object class methods are available to all Java classes. Hence Object class acts as a root of inheritance hierarchy in any Java Program
+    - lang. Object class is the super base class of all Java classes. Every other Java class descends from Object
 - **Difference between MutableLiveData and Live Data?**
     
     MLD - can change the data 
@@ -810,4 +858,19 @@
     LD - cant change the data 
     
 - **what is a call?**
+    
+    An invocation of a Retrofit method that sends a request to a webserver and returns a response. Each call yields its own HTTP request and response pair. Use
+    
+    `[clone()](https://square.github.io/retrofit/2.x/retrofit/retrofit2/Call.html#clone--)`
+    
+    to make multiple calls with the same parameters to the same webserver; this may be used to implement polling or to retry a failed call.
+    
+    Calls may be executed synchronously with `[execute()](https://square.github.io/retrofit/2.x/retrofit/retrofit2/Call.html#execute--)`, or asynchronously with `[enqueue(retrofit2.Callback<T>)](https://square.github.io/retrofit/2.x/retrofit/retrofit2/Call.html#enqueue-retrofit2.Callback-)`. In either case, the call can be canceled at any time with `[cancel()](https://square.github.io/retrofit/2.x/retrofit/retrofit2/Call.html#cancel--)`. A call that is busy writing its request or reading its response may receive an `[IOException](http://docs.oracle.com/javase/8/docs/api/java/io/IOException.html?is-external=true)`; this is working as designed.
+    
 - **Difference between post value and set value?**
+    
+    If you want to update some value using the LiveData. While using the Main thread to change the data, you should use the **setValue()** method of the MutableLiveData class and while using the background thread to change the LiveData, you should use the **postValue()** method of the MutableLiveData class.
+    
+    So, the duty of the **postValue()** method is to post or add a task to the main thread of the application whenever there is a change in the value. And the value will be updated whenever the main thread will be executed.
+    
+    While the **setValue()** method is used to set the changed value i.e. the change value will be dispatched to the active observer of the application. This **setValue()** method must be called from the main thread.
