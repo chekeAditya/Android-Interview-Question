@@ -1,5 +1,3 @@
-[https://www.notion.so/Framework-for-Student-84c8a41f621949fcb3fac6eddf80577a](https://www.notion.so/Framework-for-Student-84c8a41f621949fcb3fac6eddf80577a)
-
 - **Name the components of android?**
     
     App components are the essential building blocks of an Android app.
@@ -350,6 +348,9 @@
     - It can create memory leaks if the `Context` from `getApplicationContext()` holds onto something created by your calls on it that you don’t clean up. With an `Activity`, if it holds onto something, once the `Activity` gets garbage collected, everything else flushes out too. The `Application` object remains for the lifetime of your process.
 - **What is setRetainInstance(true) in fragments ?**
 - **What is the difference between padding and margin?**
+    
+    [Margin vs Padding](https://www.notion.so/0c82360fe6954eada5d4b5f2b7f350b4)
+    
 - **What is the difference between a ViewGroup and View?**
     - *ViewGroup → will provide an invisible container to hold other Views or ViewGroups and to define the layout properties. For example, Linear Layout is the ViewGroup that contains UI controls like Button, TextView, etc., and other layouts also.*
     - *ViewGroup → Refer to the android.view.ViewGroup class, which is the base class of some special UI classes that can contain other View objects as children.*
@@ -688,9 +689,11 @@
     
     **Non-Static Variable**
     
-    Any variable of a class which is not static is called non-static variable or an instance variable.
+    Any variable of a class that is not static is called a non-static variable or an instance variable.
     
-    Following are the important differences between static and non-static variable.
+    Following are the important differences between static and non-static variables.
+    
+    [Untitled](https://www.notion.so/5bd929554ceb4c929cbf159a6e4c6b00)
     
 - **Explain 4 OOPs principles ( with practical examples)**
     
@@ -712,6 +715,9 @@
     1. If map.put(key, value) returns *null*, then the statement “map.put(e, PRESENT) == null” will return *true* and element is added to the HashSet(internally HashMap).
     2. If map.put(key, value) returns old value of the key, then the statement “map.put(e, PRESENT) == null” will return *false* and element is not added to the HashSet(internally HashMap).
 - **What is the difference between Thread.run() and Thread.start() ?**
+    
+    [Untitled](https://www.notion.so/a386845efce44b77b76637262598fdda)
+    
 - **Can you override static methods?**
     
     **No,** we cannot override static methods because method overriding is based on dynamic binding at runtime and the static methods are bonded using static binding at compile time. So, we cannot override static methods.
@@ -766,6 +772,8 @@
 - **What is the difference between StringBuffer and StringBuilder?**
     
     Java provides three classes to represent a sequence of characters: String, StringBuffer, and StringBuilder. The String class is an immutable class whereas StringBuffer and StringBuilder classes are mutable.
+    
+    [StringBuffer and StringBuilder](https://www.notion.so/03eae80dc8b54456b6b26c02b5a02c6a)
     
 - **What are immutable classes? How can you make a class immutable?**
     
@@ -864,47 +872,3 @@
     So, the duty of the **postValue()** method is to post or add a task to the main thread of the application whenever there is a change in the value. And the value will be updated whenever the main thread will be executed.
     
     While the **setValue()** method is used to set the changed value i.e. the change value will be dispatched to the active observer of the application. This **setValue()** method must be called from the main thread.
-    
-
----
-
----
-
-- How Retrofit works Externally?
-    
-    What :- Retrofit is a type-safe HTTP client for Android and Java.
-    
-    Why:- Using Retrofit made networking easier in Android apps. As it has many features like easy to add custom headers and request types, file uploads, mocking responses, etc through which we can reduce boilerplate code in our apps and consume the web service easily.
-    
-    How:-    A model class which is used as a **JSON** model
-    
-    - An interface that defines the **HTTP** operations needs to be performed
-    - Retrofit.Builder class: Instance which uses the interface defined above and the Builder API to allow defining the **URL endpoint** for the **HTTP** operations. It also takes the **converters** we provide to format the **Response**.
-- Explain Permission and their types?
-    
-    App permissions help support user privacy by protecting access to the following:
-    
-    - **Restricted data**, such as system state and a user's contact information.
-    - **Restricted actions**, such as connecting to a paired device and recording audio.
-    
-    ![https://developer.android.com/images/training/permissions/workflow-overview.svg](https://developer.android.com/images/training/permissions/workflow-overview.svg)
-    
-    Types of Permissions→
-    
-    - Install-time permission: ⇒
-        1. this permission give your app limited access to restricted data and all app to perform restricted action that minimally affect the s/y or other apps.
-        2. at install-time permission s/y automatically grants permission in your app.
-    - Normal Permission ⇒
-        
-        this permission allow access to the data and actions that extends beyond your's sandbox. Data and actions persent very little risk to the user's privacy and operation of the other apps.
-        
-    - Signature Permission ⇒
-        1. If the app declares a signature permission that another app has defined, and if the two apps are signed by the same certificate, then the system grants the permission to the first app at install time. Otherwise, that first app cannot be granted the permission.
-        2. if you write App A that defends itself with a signature-level permission (e.g., a custom one), and you write App B that wants to talk to the defended portions of App A, you can do so, if you are signing App A and App B with the same signing key.
-    - Runtime Permissions
-        1. This give your app additional access to restricted data, and they allow your app to perform restricted actions that more substantially affect the system and other apps.
-        2. Therefore, you need to request runtime permissions in your app before you can access the restricted data or perform restricted actions
-        3. Many runtime permissions access private user data, a special type of restricted data that includes potentially sensitive information. Examples of private user data include location and contact information.
-    - Special Permissions ⇒
-        
-        Special permissions correspond to particular app operations. Only the platform and OEMs can define special permissions. Additionally, the platform and OEMs usually define special permissions when they want to protect access to particularly powerful actions, such as drawing over other apps.
