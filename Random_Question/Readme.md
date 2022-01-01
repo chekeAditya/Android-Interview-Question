@@ -1,267 +1,3 @@
-- Lifecycle Android
-    - App Open :- onCreate → onStart → onResume
-    - Pull navigation from top → no changes if go inside or press long onPause → OnStop
-    - Back button → onPause → onStop → onDestroy
-    - Click recent button and go to activity → onRestart → onStart → onResume
-    - Click_Button_Move_SecondActivity → onPause → onStart → onResume
-- OnCreate
-    
-    ```java
-    public void onCreate(Bundle savedInstanceState)
-    {
-            super.onCreate(savedInstanceState);
-            // load the layout
-            setContentView(R.layout.filters);
-    }
-    * onCreate is used to start an activity
-    * super is used to call the parent class constructor
-    * setContentView is used to set the xml
-    * If the orientation changes(i.e rotating your device from landscape mode to portrait and vice versa), the activity is recreated and onCreate() method is called again, so that you don't lose this prior information. If no data was supplied, savedInstanceState is null
-    * First super.onCreate(savedInstanceState); calls the method in the superclass and saved InstanceState of the activity if any thing damage the activity so its saved in instanceState so when reload the activity it will be the same before.
-    ```
-    
-- ScreenRoationDataSaved_@OnSaveInstanceState
-    
-    onCreate → onStart → onResume (Screen visible) →(rotation) onPause → onStop → onSavedInstanceState → onDestroy → onCreate → onStart → onRestoreInstanceState → OnResume 
-    
-    ```java
-    //onSavedINstance Code  
-    @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-            mTvWelcome = findViewById(R.id.tvWelcomeToMasai);
-            mTvWelcome.setText("Welcome to Masai School");
-            if (savedInstanceState != null) {
-                String data = savedInstanceState.getString("key");
-                mTvWelcome.setText(data);
-            }
-            Log.d(TAG,"onCreate");
-        }
-    
-        //storing it but not restoring it
-        @Override
-        protected void onSaveInstanceState(@NonNull Bundle outState) {
-            super.onSaveInstanceState(outState);
-            outState.putString("key", "Screen Rotated");
-            Log.d(TAG,"onSavedInstanceState");
-        }
-    
-        //storing nad restoring it
-        @Override
-        protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-            super.onRestoreInstanceState(savedInstanceState);
-    //        String data = savedInstanceState.getString("key");
-    //        mTvWelcome.setText(data);
-            Log.d(TAG,"onRestoreInstanceState");
-        }
-    
-    ```
-    
-- All_Lifecycle_methods
-    
-    ```java
-    protected  final String TAG = "Aditya";
-    
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG,"onStart");
-    }
-    
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d(TAG,"onResume");
-    }
-    
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG,"onPause");
-    }
-    
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        Log.d(TAG,"onRestart");
-    }
-    
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG,"onDestroy");
-    }
-    
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG,"onStop");
-    }
-    ```
-    
-- EditTextChanged_EventListner
-    
-    ```java
-    package com.example.eventlistenerstextwatcher;
-    
-    import android.os.Bundle;
-    import android.text.Editable;
-    import android.text.TextWatcher;
-    import android.view.View;
-    import android.widget.Button;
-    import android.widget.EditText;
-    import android.widget.TextView;
-    import android.widget.Toast;
-    
-    import androidx.appcompat.app.AppCompatActivity;
-    
-    public class MainActivity extends AppCompatActivity {
-    
-        EditText mEtWriteText;
-        TextView mTvText;
-        Button mBtnDisplayText;
-    
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-            mEtWriteText = findViewById(R.id.etEnterText);
-            mTvText = findViewById(R.id.tvText);
-            mBtnDisplayText = findViewById(R.id.btnDisplayText);
-            mBtnDisplayText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mTvText.setText("Button Clicked");
-                }
-            });
-            mEtWriteText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-    
-                }
-    
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-    
-                }
-    
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if (s.toString().length() >= 6) {
-                        Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-        }
-    }
-    ```
-    
-- IntentCommunication_DataValidation
-    
-    ```java
-    //Main Activity
-    package com.example.intent;
-    
-    import androidx.appcompat.app.AppCompatActivity;
-    
-    import android.content.Intent;
-    import android.os.Bundle;
-    import android.view.View;
-    import android.widget.Button;
-    import android.widget.EditText;
-    
-    public class MainActivity extends AppCompatActivity {
-        private EditText mEtUsername, mEtEmail, mEtPassword;
-        private Button mBtnSubmit;
-        private String emailValidation = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-    
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-            intiViews();
-            mBtnSubmit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    boolean emailId = isEmailValid();
-                    boolean password = isPasswordValid();
-                    boolean name = isUserNameValid();
-                    if (emailId && password && name) {
-                        Intent intent = new Intent(MainActivity.this, SecondActivity.class);
-                        intent.putExtra("username",mEtUsername.getText().toString());
-                        intent.putExtra("emailId",mEtEmail.getText().toString());
-                        startActivity(intent);
-                    }
-                }
-            });
-        }
-    
-        private void intiViews() {
-            mEtUsername = findViewById(R.id.etUserName);
-            mEtEmail = findViewById(R.id.etEmail);
-            mEtPassword = findViewById(R.id.etPassword);
-            mBtnSubmit = findViewById(R.id.btnSubmit);
-        }
-    
-        private boolean isEmailValid() {
-            if (mEtEmail.getText().toString().matches(emailValidation)) {
-                return true;
-            } else {
-                mEtEmail.setError("Invalid email");
-                return false;
-            }
-        }
-    
-        private boolean isPasswordValid() {
-            if (mEtPassword.getText().toString().trim().length() >= 6) {
-                return true;
-            } else {
-                mEtPassword.setError("Password Length is less then 6 digit");
-                return false;
-            }
-        }
-    
-        private boolean isUserNameValid() {
-            if (mEtUsername.getText().toString().trim().length() >= 4) {
-                return true;
-            } else {
-                mEtUsername.setError("Username size is less then 4");
-                return false;
-            }
-        }
-    }
-    ```
-    
-    ```java
-    //Second Activity
-    package com.example.intent;
-    
-    import androidx.appcompat.app.AppCompatActivity;
-    
-    import android.content.Intent;
-    import android.os.Bundle;
-    import android.widget.TextView;
-    
-    public class SecondActivity extends AppCompatActivity {
-        private TextView mTvUsername, mTvEmail;
-    
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_second);
-            mTvUsername = findViewById(R.id.tvUserName);
-            mTvEmail = findViewById(R.id.tvEmailId);
-            if (getIntent() != null) {
-                String username = getIntent().getStringExtra("username");
-                mTvUsername.setText(username);
-                String emailId = getIntent().getStringExtra("emailId");
-                mTvEmail.setText(emailId);
-            }
-        }
-    }
-    ```
-    
 - Launch Mode's android
     1. Standard ⇒ whenever we launch the new activity it will just added to the stack or task. If that activity is still present inside the stack then also it will create a new intance and add it to the stack.
     2. SingleTop ⇒ In this launch mode we add activity a and and above it we added avtivity b and then again try to add activity b then it will not create new instance of that activity. and stack size will remain same. ( if activity is on top of the stack don't create new instance  )
@@ -275,7 +11,8 @@
             3. If 'B' triggered itself, then no new instance is created and existing instance in existing task will re-used.
             4. If 'B' instance already exists(in any takss), it will be reused
             5. If 'B' in the single activity in task, it will be just brought to foreground.
-            6. If other activities are present on 'B' they will be popped and then the task will be brought to foreground.
+            
+            1. If other activities are present on 'B' they will be popped and then the task will be brought to foreground.
             
             Single task activity will always be at root of task.
             
@@ -327,7 +64,7 @@
         - A service is a general-purpose entry point for keeping an app running in the background for all kinds of reasons.
         - This component runs in the background to perform long-running operations. A service does not provide a user-interface.
         - They have their own lifecycler independent of the activity or fragmetn that they were created in.
-        - By default services do not work on a background thread.
+        - By default services work on a main thread.
         - TYPES:- Their are two types of service that tell the system how to manage an app
             
             A bound service can also be a started service but a started service can not be a bound service 
@@ -339,6 +76,8 @@
                 - Tells the system to keep them running until thier work is completed. This could be to sync some data in the background or play music even after the user leaves the app.
                 - Types 1. Foreground (notify the user )2. Background ( don't notify the user )
             - Bound Service
+                
+                ![https://www.tutorialspoint.com/android/images/services.jpg](https://www.tutorialspoint.com/android/images/services.jpg)
                 
                 Communicate with it on a consistent bases. By Binding to it, you can communicate with the service very easily.
                 
@@ -353,18 +92,17 @@
                 
                 If their is a consistent or frequent communication between some client and the service e.g Streaming service.
                 
-        
     - Broadcast Receivers
-        - Braodcase receiver is nothing but basically it's a listener which is will listen all the events happened into the application ( here events are Battery low, incomming call, incomming sms, wifi-availability etc ) as we got these event as a Intent so when device matches the event will triggered the events. Broadcast Receiver should register in the Manifest to listen this event's and its registered properly then it will respond properly through intent.
-        - 
-    1. Content Providers:- An object used to work with data via content providers. your application can share data with other applicatoins. Content provider have the SQL lite database and it's work on this.
-    2. :- Perform an action in response to a message from some other component. Broadcast receiver fires and intent and says this thing comes us.
+        - Broadcast receiver is nothing but basically it's a listener which will listen all the events happened into the application ( here events are Battery low, incomming call, incomming sms, wifi-availability etc ) as we got these event as a Intent so when device matches the event will triggered the events. Broadcast Receiver should register in the Manifest to listen this event's and its registered properly then it will respond properly through intent.
+    - Content Providers
+        1. Content Providers:- An object used to work with data via content providers. your application can share data with other applicatoins. Content provider have the SQL lite database and it's work on this.
+        2. :- Perform an action in response to a message from some other component. Broadcast receiver fires and intent and says this thing comes us.
     
-- What is fragment?
+- What is fragment
     
     Android Fragment is **the part of activity**, it is also known as sub-activity. There can be more than one fragment in an activity. Fragments represent multiple screen inside one activity. Android fragment lifecycle is affected by activity lifecycle because fragments are included in activity.
     
-- What's the difference between commit() and commitNow()?
+- What's the difference between commit() and commitNow()
     
     Like commit but allows the commit to be executed after an activity state is saved. But it's dangerous as the commit can be lost if acitivty needs to be restored later from it's state.
     
@@ -372,14 +110,13 @@
     
 - **onSavedInstanceState() and onRestoreInstanceState() in activity**
     
-    Before screen is rotatd whatever data we had we the data save it using onSavedInstace funcation and after screen get rotated to get the same data we use onRestoreInstanceState.
+    Before screen is rotatd whatever data we had we save it using onSavedInstace function and after screen get rotated to get the same data we use onRestoreInstanceState.
     
-    - onSavedInstanceState() - This method is used to store data before pausing the activity.
-    - onRestoreInstanceState() - This method is used to recover the saved state of an activity when the activity is recreated after destruction. So, the onRestoreInstanceState() receive the bundle that contains the instance state information.
-- **How to prevent data from reloading and resetting when a screen is rotated ?**
+    - onSavedInstanceState() - This method is used to store data before pausing the activity. and it will store using outstate(key,value)
+    - onRestoreInstanceState() - This method is used to recover the saved state of an activity when the activity is recreated after destruction. So, the onRestoreInstanceState() receive the bundle that contains the instance state information. we can get the details by using savedInstanceState.get(key , Default value ) and assign to the value
 - Content Provider
     
-    Using content provider we can share data in the secured manner. app2 will use the api called content resolver using which it will hit app1 database or data. And Content provider which in app1 has will respond back using cursor. It's the interprocess communication.
+    Using content provider we can share data in the secured manner. app2 will use the api request called content resolver using which it will hit app1 database or data. And Content provider which is in app1 will respond back using cursor. It's the interprocess communication.
     
     getContentResolver() return instance of the content resolver
     
@@ -407,13 +144,15 @@
     
     UI components of android applications like **[Activity](https://www.geeksforgeeks.org/activity-lifecycle-in-android-with-demo-app/)** and **[Fragments](https://www.geeksforgeeks.org/introduction-fragments-android/)** use an oject **CursorLoader** to send query requests to **ContentResolver.** The ContentResolver object sends requests (like create, read, update, and delete) to the **ContentProvider** as a client. After receiving a request, ContentProvider process it and returns the desired result. 
     
-- **Does a service run in the background thread ?**
+- **Does a service run in the background thread**
     
     A service runs **in the main thread of its hosting process**; the service does not create its own thread and does not run in a separate process unless you specify otherwise. You should run any blocking operations on a separate thread within the service to avoid Application Not Responding (ANR) errors.
     
-- **What are broadcast receivers ?**
+- **What are broadcast receivers**
+    
+    Broadcast Receivers simply respond to broadcast messages from other applications or from the system itself. These messages are sometimes called events. For example, applications can also initiate broadcasts to let other applications know that some data has been downloaded to the device and is available for them to use, so this is the broadcast receiver who will intercept this communication and will initiate appropriate action.
+    
     - Normal Broadcast
-        - Broadcast Receivers simply respond to broadcast messages from other applications or from the system itself. These messages are sometimes called events. For example, applications can also initiate broadcasts to let other applications know that some data has been downloaded to the device and is available for them to use, so this is the broadcast receiver who will intercept this communication and will initiate appropriate action.
         - Declaring Broadcast in the manifest file will work in the various situation but in certain cinario it's not an appropriate solution.
             - For E.g Assume you had to read OTP from msg which had been sent on your device. It's work is to read it and recognise the incomming OTP but if app is not in forgroud in that app will receive the OTP as it is declared in the manifest file which is wrong. Instead of declaring it in the manifest declare in the code.
                 
@@ -438,7 +177,7 @@
         
         - How to prevent intent Broadcast propagation ? ( colision of BR when both actions are same) ?
         
-        → Suppose you can 4 app with same action and category values `app1`, `app x`, `app y`, `app z`
+        → Suppose you have 4 app with same action and category values `app1`, `app x`, `app y`, `app z`
         
         and if Broadcast event happen then all the broadcast event will triggered, if you don't want that to happened then use LocalBroadcastManager to send the broadcast. So this case it will propogate to `app x` only not other app .
         
@@ -461,16 +200,16 @@
         - BR are prone to hacks, thus always secure them.
             - set exported attribute to false
             - use localBroadcastManager to limit propagation beyond app.
-- How to use Broadcast?
+- How to use Broadcast
     
     The Whole process of using a broadCast divided into two parts
     
     - Register Broadcast → For register broadcast into the application you had 2 options. Either you can register the event in the AndroidManifest.xml file of application or you can register broadcast via the Context.registerReceiver() method ( programatically ).
     - Receive Broadcast → By extending the BroadcastReceiver abstract class, you can receive the broadcast in your application. After extending, all you need to do is override the **onReceive()** method and perform the required action in the **onReceive()** method because this onReceive() method will be called when a particular broadcast is received.
-- What is LocalBroadcastManager in Android?
-    - If the communication is not between different applications on the Android device then is it suggested not to use the Global BroadcastManager because there can be some security holes while using Global Broadcastmanager and you don’t have to worry about this if you are using LocalBroadcastManager.
+- What is LocalBroadcastManager in Android
+    - If the communication is not between different applications on the Android device then it is suggested not to use the Global BroadcastManager because there can be some security holes while using Global Broadcastmanager and you don’t have to worry about this if you are using LocalBroadcastManager.
     - LocalBroadcastManager is used to register and send a broadcast of intents to local objects in your process. It has lots of advantages:
-        1. You broadcasting data will not leave your app. So, if there is some leakage in your app then you need not worry about that.
+        1. Broadcasting data will not leave your app. So, if there is some leakage in your app then you need not worry about that.
         2. Another thing that can be noted here is that other applications can’t send any kind of broadcasts to your app. So, you need not worry about security holes.
     - How you can use it ?
         
@@ -510,7 +249,53 @@
         Your Received data : Aditya
         ```
         
-- Service and Type of Service?
+- Service and Type of Service
+    - Depth
+        
+        ```java
+         * To Start the service you had to write in into manifest.
+         * YOu cannot stop a service thier is no explicit way to stop the service.
+         * Service always run on the main thread. If you are performing long running operation then you had to create a bg Thread.
+         * To Stop the service you can use stop Self
+         *
+         Service Behaviour
+            * What Happen to the app when resource crunch situation arises?
+            -> If you are running so many application then android may kill your previous app in case that app contain service running in bg then andriod
+                will not try to kill the app as the service get the high priority. if Resouce is soo serious the it will close the app.
+        
+            * What Should happened to the service which has been killed?
+            -> That is determined the value you wrote in the onStartCommand
+                * weather you had to restart the service and restarted service had the intent value populated so that it can continue with it's work.
+                * If integer constant is START_STICK -> autoRestart 'Yes' when resources available but intent will be 'Null Intent'
+                * If integer constant is START_NOT_STICK -> autoRestart 'No' that doesn't mean service will not start at all if you triggere the intent to start the service again the it will start and when resources available but intent 'With Intent when started'
+                * If integer constant is START_REDELIVER_INTENT -> autoRestart always 'Yes' when resources available but intent 'Intent'
+        
+            * START_SERVICE -> Service are being explicitly managed & long running
+                            -> no need to remember state at kill time
+                            -> long running music playing service
+        
+            * START_NOT_STICKY -> Service are being not explicitly managed
+                               -> Services are periodically running and self stopping
+                               -> Alarm service or server data polling
+        
+            * START_REDELIVER_INTENT -> Service are being explicitly managed
+                                     -> Restart from previous state at the kill time
+                                     -> File Download
+        
+         * Quick Intro To Bound Service
+         * 'BOUND_SERVICE' -> A Service which is providing an information to Activity or the bound service is known as 'BOUND_SERVICE'
+         * 'LOCAL_BINDING' -> Component which are establishing the connection or binding between service to service or service to activity of the same app that's why we called it as 'LOCAL_BINDING'
+                Local Binding Implementation -> IBinder
+         * 'REMOTE_BINDING' -> Component which are establishing the connection or binding between service to service or service to activity of the two different app's that's why we called it as 'REMOTE_BINDING' or IPC(inter-process-communication)
+                Remote Binding Implementation -> Messenger API and AIDL(Android Interface definition language)
+                                              -> Messenger -> it's basically a queued concept where every component which want to connect to the service will trigger a request that are queued i.e they are more suited for non multithreaded scenario
+                                              -> AIDL -> it's basically highly concept and they are more suited for multithreaded environment. Official Document say's most application should not used AIDL.
+        
+         * Local Binding Implementation -> Implement onBind which return IBinder instance
+                                        -> Use ServiceConnection API to Connect To service
+        
+        ```
+        
     
     A service is a component which runs in the background to perform certain tasks or long-running operations without needing to interact with the user. And it works even if the application is destroyed. Using Service you can perform InterProcess Communication (IPC)
     
@@ -520,7 +305,7 @@
     2. Background :- Here user will never know about what is happening in the background of the application. For example while sending some images over whatsapp, it compresses the image file to reduce the size. Here the task is done in the background and the user had no idea about it.
     3. Bound service :- A service is bound when one or more  application component binds to it by calling bindService(). offers client-server interface that allows component interact with service, send request, get result and even do IPC(inter process communication).
     
-    return START_STICKY → it will run unit i explicitly call stop method
+    return START_STICKY → it will run untill I explicitly call stop method
     
     return START_NONSTICKY → it will run and finish once it's work is done
     
@@ -530,19 +315,25 @@
     
     ![https://www.tutorialspoint.com/android/images/services.jpg](https://www.tutorialspoint.com/android/images/services.jpg)
     
-- **Different ways to communicate between service and activity/fragments ?**
-    1. Interface: The easiest way to communicate between your activity and fragments is using interfaces. The idea is basically to define an interface inside a given fragment A and let the activity implement that interface.
-    2. ViewModel: The ViewModel case, makes things pretty simpler at the end, since you don't have to add extra logic that makes things dirty in the code and messy. Plus it will allow you to separate the gathering (through calls to an SQLite Database or an API) of data from the Controller (activities and fragments).
-    3. call fragment method from the activity class.
-    4. We can use Broadcast Sender and Receiver 
-    5. we can use through Bundle also 
-- What is IntentService and JobIntentService?
+- **Different ways to communicate between service and activity/fragments**
+    1. You can use Bound Service which acts as a server in client-server interface.
+    2. You can use Broadcast Receiver
+    3. You can use Bus Architecture
+    4. You can used Result Receiver
+- What is Service, IntentService and JobIntentService
+    - Service - This runs on the same main thread which invokes this service and performs some background operation. For any long running operation happening on the main thread it is recommended to create a new thread and do the job (eg; `Handler`) by not impacting the main thread's performance.
+        
+        **Drawback : Runs on main thread**
+        
+    - IntentService - Intent service also helps in doing some long running (indefinite) background task. The only difference is that it creates a new thread to perform this task and does not run on the main thread. Does the given job on it's `onHandleIntent`.
+        
+        **Drawback: The job given to the IntentService would get lost when the application is killed**
+        
+    - JobIntentService - Job intent service is very similar to IntentService but with few benefits like the application can kill this job at any time and it can start the job from the beginning once the application gets recreated/up.
     
-    InterntService :- Intent Service helps in doing some long-running background task. The only difference is it create a new task and does not run on the main thread.
+    But from Oreo, if the app is running in background it's not allowed to start the service in background. Android asks us to start the service explicitly by `context.startForegroundService` instead of `context.startService` and when the service is started within 5 seconds it must be tied to the notification to have a UI element associated with it.
     
-    JobIntent Service:- Job intent service is very simiar to intentservice the only difference is applicaiton can kill this job at any time and it can start the job from begining once the application get recreated/up.
-    
-- **What is the difference when you extend a class with service and IntentService ?**
+- **What is the difference when you extend a class with service and IntentService**
     1. **Usage:** If you want some background task to be performed for a very long period of time, then you should use the IntentService. But at the same time, you should take care that there is no or very less communication with the main thread. If the communication is required then you can use main thread handler or broadcast intents. You can use Service for the tasks that don’t require any UI and also it is not a very long running task.
     2. **How to start?:** To start a Service you need to call the **onStartService()** method while in order to start a start IntentService you have to use Intent i.e. start the IntentService by calling **Context.startService(Intent).**
     3. **Running Thread:** Service always runs on the **Main thread** while the IntentService runs on a separate **Worker thread** that is triggered from the Main thread.
@@ -550,7 +341,7 @@
     5. **Main Thread blocking:** If you are using Service then there are chances that your Main thread will be blocked because Service runs on the Main thread. But, in case of IntentService, there is no involvement of the Main thread. Here, the tasks are performed in the form of Queue i.e. on the First Come First Serve basis.
     6. **Stop Service:** If you are using Service, then you have to stop the Service after using it otherwise the Service will be there for an infinite period of time i.e. until your phone is in normal state. So, to stop a Service you have to use **stopService()** or **stopSelf()**. But in the case of IntentService, there is no need of stopping the Service because the Service will be automatically stopped once the work is done.
     7. **Interaction with the UI:** If you are using IntentService, then you will find it difficult to interact with the UI of the application. If you want to out some result of the IntentService in your UI, then you have to take help of some Activity.
-- What is JobScheduler?
+- What is JobScheduler
     
     This is an API for scheduling various type of jobs against the framework that will be executed in your applicaiton's own process.
     
@@ -579,7 +370,7 @@
     
     Android AsyncTask going to do background operation on background thread and update on main thread. In android we cant directly touch background thread to main thread in android development. asynctask help us to make communication between background thread to main thread.
     
-- **What are handlers?**
+- **What are handlers**
     
     A Handler allows you to send and process `[Message](https://developer.android.com/reference/android/os/Message)` and Runnable objects associated with a thread's `[MessageQueue](https://developer.android.com/reference/android/os/MessageQueue)`. Each Handler instance is associated with a single thread and that thread's message queue. When you create a new Handler it is bound to a `[Looper](https://developer.android.com/reference/android/os/Looper)`. It will deliver messages and runnables to that Looper's message queue and execute them on that Looper's thread.
     
@@ -592,7 +383,7 @@
     
     Scheduling messages is accomplished with the post(Runnable), postAtTime(Runnable, long), postDelayed(Runnable, long), sendEmptyMessage(int), sendMessage(Message), sendMessageAtTime(Message, long), and sendMessageDelayed(Message, long) methods.
     
-- **What are Loopers?**
+- **What are Loopers**
     
     **Simplest Definition of Looper & Handler:**
     
@@ -600,7 +391,7 @@
     
     **Details in general wording:**
     
-    So a **PipeLine Thread** is a thread which can accept more tasks from other threads through a Handler.
+    So a **PipeLine Thread** is a thread which can accept more tasks from other threads through a Handler. 
     
     The **Looper** is named so because it implements the loop – takes the next task, executes it, then takes the next one and so on. The Handler is called a handler because it is used to handle or accept that next task each time from any other thread and pass to Looper (Thread or PipeLine Thread).
     
@@ -613,11 +404,11 @@
     
     A Looper and Handler or PipeLine Thread's very perfect example is to download more than one images or upload them to a server (Http) one by one in a single thread instead of starting a new Thread for each network call in the background.
     
-- **What is a Message-Queue?**
+- **What is a Message-Queue**
     
     Low-level class holding the list of messages to be dispatched by a Looper. Messages are not added directly to a MessageQueue, but rather through Handler objects associated with the Looper. MessageQueue is a message loop or message queue which basically contains a list of Messages or Runnables (set of executable code).
     
-- **Difference between Serializable and Parceable?**
+- **Difference between Serializable and Parceable**
     
     In Android, we cannot just pass objects to activities. To do this the objects must either implement `Serializable` or `Parcelable` interface.
     
@@ -635,8 +426,7 @@
     
     Parcelable is a better choice since it is recommended by Google.
     
-- **How would you update the UI from the background thread?**
-    
+- **How would you update the UI from the background thread**
     
     Although using ‘onPostExecute’ in an ‘AsyncTask’ is one of the solutions, that cannot be applied everywhere, especially where there is no Async Task (eg. when you are making an asynchronous network call with the help of a third party library). Wrapping up a **synchronous** network call with **Async Task** is one of the ways of using the AsyncTask.
     
@@ -648,17 +438,16 @@
     
     You can insert the above bit of code in the location where you want the actions to be performed on the main UI thread.
     
-- **What is the intent? What is the` maximum amount of data that you can transfer using intent?**
+- **What is the intent? What is the` maximum amount of data that you can transfer using intent**
     - An intent is a messaging object you can use to request an action from another app component.
     - Using Intent you can start an activity, start a service, delivering broadcast.
     - The maximum amount of data transfer is approx 1MB
-    
-- What is a fragment?
+- What is a fragment
     - Fragment is a small chunk of UI
     - It has it's own lifecycle
     - it can process it's own events
     - it can be added or removed which the activity runs
-- **When should you use a fragment rather than Activity?**
+- **When should you use a fragment rather than Activity**
     - Combines several fragment in a single activity.
     - Reuse the same fragment across several activities
     - Make better use of larger screen space tablets
@@ -666,14 +455,14 @@
     - Fixed/Scrolling/Swipe tab displays
     - Dialog Boxes
     - Action bar customization with the list and tab modes
-- **Why is it recommended to use a default constructor while creating a fragment?**
+- **Why is it recommended to use a default constructor while creating a fragment**
     - Android framework decides to recreate our fragment when the orientation changes. Android calls the no-argument constructur of our fragment. It has no idea what constructor we have created.
     - fragment.argument = bundle →  in the newInstance we are passing the bundle inside it. so when we create a newInstance android will extract the bundle and store it. so when android orientation changes the android will recreates fragment using the no-arguemnt construtor and
     - can attach the bundle to the fragment as it has stored the bundle earlier. and later we can again accss that data by using getArgument like ( val video_id = argument?.getLong(EXTRA_VIDEO_ID )
     - So system restores  a Fragment
     - It will automatically restore our bundle
     - Restore the state of the fragment to the same state.
-- **What is Context?**
+- **What is Context**
     - Defination
         - It is the context of the current state of the application, used to get information regarding activity and applciation, can be used to get access to resources, databases and shared preferences and both activity and application class extend context.
     - Literal meaning of context is:
@@ -708,7 +497,7 @@
     
     ***Types of Context :- Application Context and Activity Context***
     
-- **What is Application Context?0**
+- **What is Application Context**
     - It is the application and we are present in Application. For example - MyApplication(which extends Application class). It is an instance of MyApplication only.
     - Both the Activity and Application classes extend the Context class.
     - It is an instance that is the singleton and can be accessed in activity via `getApplicationContext()`. This context is tied to the lifecycle of an application. The application context can be used where you need a context whose lifecycle is separate from the current context or when you are passing a context beyond the scope of activity.
@@ -717,7 +506,7 @@
     - In case, when you have to initialize a library in an activity, always pass the application context, **not** **the activity context**.
     - You only use `getApplicationContext()` when you know you need a `Context` for something that may live longer than any other likely `Context` you have at your disposal.
     - Wrong use of Context can easily lead to memory leaks in an android application
-- **What is Activity Context?**
+- **What is Activity Context**
     - This context is available in an activity. This context is tied to the lifecycle of an activity. The activity context should be used when you are passing the context in the scope of an activity or you need the context whose lifecycle is attached to the current context.
     - Example Use: If you have to create an object whose lifecycle is attached to an activity, you can use the activity context.
     
@@ -729,7 +518,7 @@
     - MainActivity1 [Here we have both Activity(MainActivity1) context and Application context present] [Nearest Context is Activity Context]
     - MainActivity2 [Here we have both Activity(MainActivity2) context and Application context present] [Nearest Context is Activity Context]
     - It returns the Context which is linked to the Activity from which it is called. This is useful when we want to call the context from only the current running activity. and it can be used for toast, intent start activity
-- **When to use Context and Application context?**
+- **When to use Context and Application context**
     
     Let's learn which context to use at which place with an example:
     
@@ -738,10 +527,10 @@
     - So always remember, in case of Singleton(lifecycle is attached to the application lifecycle), always use the Application Context.
     - So, now when to use the Activity Context. Whenever you are in Activity, for any UI operations like showing toast, dialogs, and etc, use the Activity Context.
     - Always try to use the nearest context which is available to you. When you are in Activity, the nearest context is Activity context. When you are in Application, the nearest context is the Application context. If Singleton, use the Application Context
-- **When to not to use Application context?**
+- **When to not to use Application context**
     - It’s not a complete `Context`, supporting everything that `Activity` does. Various things you will try to do with this `Context` will fail, mostly related to the GUI.
     - It can create memory leaks if the `Context` from `getApplicationContext()` holds onto something created by your calls on it that you don’t clean up. With an `Activity`, if it holds onto something, once the `Activity` gets garbage collected, everything else flushes out too. The `Application` object remains for the lifetime of your process.
-- **What is the lifecycle of a View?**
+- **What is the lifecycle of a View**
     
     # **View Life Cycle**
     
@@ -757,10 +546,9 @@
     View(Context context) View(Context context, @Nullable AttributeSet attrs) View(Context context, @Nullable AttributeSet attrs, int defStyleAttr) View(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes)
     ```
     
-- **What is an Application Not Responding dialogue? When it usually occurs?**
-- What happens when you make an API request on UI thread?
+- What happens when you make an API request on UI thread
     - Making api request on UI thread will basically block the Ui component's as it's happen synchronously due with Ui will reaming completely unreponsive untill operation completes. for this reason you should use the seperate threads which thereby avoid blocking the Ui.
-- **What are the differences between Thread & Async tasks?**
+- **What are the differences between Thread & Async tasks**
     
     # Thread
     
@@ -792,47 +580,49 @@
     2. **doInbackground(Params..)**Invoked on the background thread immediately after onPreExecute() finishes executing.
     3. **onProgressUpdate(Progress..)**Invoked on the UI thread after a call to publishProgress(Progress...).
     4. **onPostExecute(Result)**Invoked on the UI thread after the background computation finishes.
-- what is singleton?
+- what is singleton
+    
+    a singleton class is a class that can have only one object
     
     so we cannot create an instance of the singleton class.
     
     if we had non-singleton class and if we have initialize it everytime then each time we had to create a new object of that class and address of that class will be different each time. but in case of singleton class address remains the same.
     
-- **What is the difference between commit and apply in sharedpreferences?**
+- **What is the difference between commit and apply in sharedpreferences**
     
     the differences of commit() and apply().
     
     1. Return value:
     
-    ```
-    apply() commitswithout returning a boolean indicating success or failure.commit() returnstrue if the save works,false otherwise.
+    ```kotlin
+    apply() commits without returning a boolean indicating success or failure.commit()  returns true if the save works,false otherwise.
     ```
     
     2. Speed:
     
-    ```
+    ```kotlin
     apply() isfaster.commit() isslower.
     ```
     
     3. Asynchronous v.s. Synchronous:
     
     ```
-    apply():Asynchronouscommit():Synchronous
+    apply():Asynchronous commit():Synchronous
     ```
     
     4. Atomic:
     
     ```
-    apply(): atomiccommit(): atomic
+    apply(): atomic commit(): atomic
     ```
     
     5. Error notification:
     
     ```
-    apply():Nocommit():Yes
+    apply():No commit():Yes
     ```
     
-- **What is a recycler view and How does it work?**
+- **What is a recycler view and How does it work**
     
     ## **What is RecyclerView?**
     
@@ -959,7 +749,7 @@
     
     Date data = event.date;
     
-- **What do you mean by destructuring in Kotlin?**
+- **What do you mean by destructuring in Kotlin**
     - Destructing is a convient way of extracting multiple values from data stored in objects and arrays. or **destructuring declaration** is the one that creates and initializes multiple variables at once.
     - Thesre works on the component() functions. The number of variables that a destructing declaration can define, the class provide those number of component functions, starting from component1(), component2(), upto componentN(). Data class in kotlin by default implement Component functions.
     
@@ -990,16 +780,16 @@
     }
     ```
     
-- Difference between == and ===?
+- Difference between == and ===
     - == is used to compare the value stored in the varibles are equal or not.
     - === is used to check if the reference of the variable are equal or not.
-- What are Companion Objects in Kotlin ?
+- What are Companion Objects in Kotlin
     - If you want to write a function or any member of the class that can be called without creating an instance of the class then you can write the same as a member of a companion object inside the class.
-- init blocks?
+- init blocks
     
     Init block are the initializer blocks that are executed after the primary contructor is called. A class can have multiple init blocks and they all execute in a series. If you want to perform certain task then it will not be done into primary constructor it will be done inside the init blocks.
     
-- Scope Function?
+- Scope Function
     
     There are two main difference between the scope functions: 
     
@@ -1008,31 +798,26 @@
     - What are Scope Functions?
         - Makes your code consice and readable.
     - Types of Scope Functions?
-        1. With :- return: lambda result, Context object: this
-        2. Let :- 
-        3. Run :- 
-        4. Apply :- return: context Object, context Object : this
-        5. Also:- return: context object, Context Object: it
-    - Key DIfference between the scope functions?
-    - When, Where, and how to use scope functions?
-        
-        
-    - Short Guide of using scope functions?
-- Extension Function?
+        1. With :- return: lambda result, Context object: this (  which doesn’t provide lamda result)
+        2. Let :- ( used for the null safety calls )
+        3. Run :- (used for both compilation and initiazing)
+        4. Apply :- return: context Object, context Object : this ( used for the initiazling)
+        5. Also:- return: context object, Context Object: it ( used to perform any extra operation for the function )
+- Extension Function
     
     Ability to add more functionality to the existing classes by without inheriting them. This is achieved through a feature known as extensions. When a function is added to an existing class it is known as extension functions.
     
     for more details refer [this](https://github.com/chekeAditya/Data-Structure-Algorithm/blob/main/CodingTask/ExtensionsFunctions/ExtensionFunction.kt)
     
-- Suspend Function?
+- Suspend Function
     
-    Suspend function is a function that could be started, paused and resume. And the important point about Suspend funciton is we that we are only allowed to called a suspend function from a Corouine or any other suspend function.
+    Suspend function is a function that could be started, paused and resume. And the important point about Suspend funciton that you are only allowed to called a suspend function from a Corouine or any other suspend function.
     
-- Delay Functions?
+- Delay Functions
     
     It is a function which delays coroutine for a given time without blocking a thread, and resumes it after a specified time. When we add the suspend keyword in the function, all the cooperations are automatically done for us. We don't have to use when or switch cases in order to switch from one fuction to another.
     
-- Inline Functions?
+- Inline Functions
     
     Inline function instruct compiler to insert complete body of the function wherever that function got used in the code.
     
@@ -1142,7 +927,7 @@
         
     - CrossInline function
         
-        [https://github.com/chekeAditya/Data-Structure-Algorithm/blob/main/CodingTask/InlineFunctions/InLineFunctions.kt](https://github.com/chekeAditya/Data-Structure-Algorithm/blob/main/CodingTask/InlineFunctions/InLineFunctions.kt)
+        [https://github.com/chekeAditya/Data-Structure-Algorithm/blob/main/CodingTask/InlineFunctions/InLineFunctions.kt](https://github.com/chekeAditya/Data-Structure-Algorithm/blob/main/CodingTask/InlineFunctions/CrossInline.kt)
         
 - Lambdas in Kotlin
     - Defination
@@ -1237,7 +1022,7 @@
         
         Refer this for good explanation : [Link](https://github.com/chekeAditya/Data-Structure-Algorithm/blob/main/CodingTask/Lambdas_Expressions/Lambdas_Function.kt)
         
-- Communication Between Suspend function?
+- Communication Between Suspend function
     
     ```kotlin
     
@@ -1272,18 +1057,23 @@
     /*We can see the two extension function that they can be used to resume the coroutines with a return value or with an exception if an error had occurred while the function was suspended. This way, a function could be started, paused, and resume with the help of Continuation. We just have to use the suspend keyword.*/
     ```
     
-- What is Enum Classes?
+- What is Enum Classes
     - An `enum` is a special "class" that represents a group of **constants** (unchangeable variables, like `final` variables).
-    - An enum class is just like the class have attributes like a class, have attributes and methods. The only difference is that enum constants are public, static and final (unchangeable-cannot be overridden)
+    - An enum class is just like the class have attributes and methods. The only difference is that enum constants are public, static and final (unchangeable-cannot be overridden)
 - Sealed Classes?
     - As the word sealed suggests, sealed classes conform to **restricted** or **bounded class hierarchies**. A sealed class defines a set of subclasses within it. It is used when it is known in advance that a type will conform to one of the subclass types. Sealed classes ensure type-safety by restricting the types to be matched at compile-time rather than at runtime.
     - Prevent people from extending any random classes or making any random class of a subclass of any other class. The answer to this particular class is sealed class.
-- How viewModel Work Internally?
-    
-    The `[ViewModel](https://developer.android.com/reference/androidx/lifecycle/ViewModel)` class is designed to store and manage UI-related data in a lifecycle conscious way. The `[ViewModel](https://developer.android.com/reference/androidx/lifecycle/ViewModel)` class allows data to survive configuration changes such as screen rotations.
-    
-    On any configuration change, the current activity instance is destroyed and a new instance of the activity is created which makes the `hashcode` to change. But the counter value is retained as we are keeping it inside our `ViewModel` and the `viewmodels` are not destroyed if the activity is getting recreated due to configuration changes.
-    
+- How viewModel Work Internally
+    - Definations
+    - Advantages of Viewmodel
+        - Handle Configuration Changes → it automatically retained whenever activity is recreated due to configuration changes
+        - Lifecycle Awareness → Viewmodel objects are also lifecycle-aware. They are automatically cleard when the lifecycle they are observing gets permantly destroyed.
+        - Data Sharing → Data can be easily shared betweeen fragment in an activity using viewModels.
+        - Kotlin-Coroutine Support → ViewModel include kotlin-coroutines so they can easity integrated for any asynchronous processing.
+    - Internal working
+        
+        Refer thi s [link](https://blog.mindorks.com/android-viewmodels-under-the-hood) 
+        
 - Visibility Modifier's
     - Public:- This means that Declaration are visible everywhere.
     - internal:- declarations are visible inside a module.
@@ -1297,13 +1087,13 @@
         Another difference is that in Kotlin *outer* classes do not see *private* *nested* (or *inner*) classes
         
     - Proceted:- Declarations are only visible in its class and in its subclassess
-- Difference between open and public?
+- Difference between open and public
     
     **public**: public keyword in Kotlin is similar to java it is use to make the visibility of classes, methods, variables to access from anywhere.
     
     **open**: In Kotlin all classes, functions, and variables are by defaults final, and by inheritance property, we cannot inherit the property of final classes, final functions, and data members. So we use the open keyword before the class or function or variable to make inheritable that.
     
-- What is dispatchers and there types in Coroutines ?
+- What is dispatchers and there types in Coroutines
     - Dispacthers helps coroutines in deciding the thread on which the work has to be done. Dispatchers are passed as an arguments in the GlobalScope by mentioning which type of dispatchers we can use depending on the work that we want the coroutine to do.
     - Types of Dispatchers
         - Main Dispatcher:-
@@ -1312,7 +1102,7 @@
             
         - IO Dispatcher:-
             
-            it is used to perform all the data operations such as networking, reading, or writing from the database, reading, or writing to the files eg: Fetching data from the database is an IO operation, which is done on the IO thread.
+            It is used to perform all the data operations such as networking, reading, or writing from the database, reading, or writing to the files eg: Fetching data from the database is an IO operation, which is done on the IO thread.
             
         - Default Dispatcher:-
             
@@ -1326,10 +1116,6 @@
     
     ***coroutines are lightweight threads. By lightweight,** **it means that creating coroutines doesn’t allocate new threads. Instead, they use predefined thread pools and smart scheduling for the purpose of which task to execute next and which tasks later**.*
     
-    Coroutines are basically 2 types
-    
-    - StackLess
-    - StackFun
 - Coroutines vs Threads?
     - Fetching the data from one thread and passing it to another thread takes a lot of time. It also introduces lots of callbacks, leading to less readability of code. On the other hand, coroutines eliminate callbacks.
     - Creating and stopping a thread is an expensive job, as it involves creating their own stacks.,whereas creating coroutines is very cheap when compared to the performance it offers. coroutines do not have their own stack.
@@ -1428,6 +1214,12 @@
 - **Livedata**
     - LiveData is an observable data holder class that is used to observe the changes of a ViewModel and update those changes.
     - LiveData is lifecycle-aware, which means that whenever data is updated or changed, the changes are only applied to the specific app components that are in an active state. Contrarily, if the app components are inactive, the changes will not be applied
+    - **Synchronous vs Asynchronous Update**
+    
+    LiveData doesn’t have public methods to update its value. Hence you’ll use `MutableLiveData` to update the value inside LiveData with the help of the following two options:
+    
+    1. `setValue`: sets the value instantly. This is synchronous update where main thread calls `setValue`. With Kotlin’s property access syntax, you’ll often use `value` instead of `setValue`.
+    2. `postValue`: Asynchronous updating, means Observer doesn’t receive instant update, rather receives update when UI thread is active. When you call `postValue` more than one time from background thread, LiveData dispatches only the latest value to the downstream. Being asynchronous, this does not guarantee instant update to the Observer.
     - **Why do we need LiveData?**
         - It removes the leaks caused by the interfaces/callbacks that send results to the UI thread. This is a core feature of an MVVM model where callbacks are sent from ViewModel to activity/fragment.
         - It de-couples tight integration between data, mediator, and the UI layers.
@@ -1465,6 +1257,9 @@
             
             Like the Singleton pattern, we can extend our LiveData object too to wrap system services so that they can be shared in our app. Once the LiveData object connects to the system service, any observer that needs the resource can watch the LiveData object easily.
             
+    - Just a **Deep Dive(optional)**
+        
+        
 - Types of LiveData
     - LiveData
         
@@ -1485,6 +1280,177 @@
         ***SingleLiveEvent*** is a subclass of MutableLiveData. It is aware of the View's lifecycle and can observe the data with a single Observer.
         
 - Work Manager?
+    - Depth
+        
+        Work manager is part of Android Jetpack Libraries and an architecture Component mainly intended for doing long-running background tasks.
+        
+        Basics of WorkManager
+        
+        - Constaints
+            
+            Contraints → before starting the work we may have some predefined constraints. like task may need network connectivity if it’s related to network, or it can be battery efficient. It can be single or multiple constraints based on the requirement.
+            
+            ```kotlin
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresBatteryNotLow(true)
+                .setRequiresStorageNotLow(true)
+                .setRequiresCharging(true)
+                .setRequiresDeviceIdle(true)
+                .build()
+            ```
+            
+        - Worker
+            - Task or work that need to be performed is defined using worker class.
+            - It’s an abstract class so we need to subclass it and override the method `doWork()` ****where we do our actual work implementation.
+            - `Worker` class is responsible for performing work synchronously on a background thread provided by `WorkManager`
+                
+                ```kotlin
+                class UploadLogsWorker(appContext: Context, workerParams: WorkerParameters)
+                    : Worker(appContext, workerParams) {
+                
+                    override fun doWork(): Result {
+                        try {
+                            val response = uploadLogData()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            return Result.failure()
+                        }
+                
+                        // Indicate whether the task done successfully
+                        return if(response.isSuccess) Result.success() else  Result.retry()
+                    }
+                
+                    fun uploadLogData(imageUri: String): Response {
+                        // API service request code goes here
+                    }
+                }
+                ```
+                
+            - `Result.success()` : Returns an instance of Result that can be used to indicate that the work is completed successfully
+            - `Result.failure()` : Returns an instance of Result that can be used to indicate that the work is completed with a permanent failure
+            - `Result.retry()` : Returns an instance of Result that can be used to indicate that the work is encountered a transient failure and should be retried with backoff policy
+        - WorkRequest
+            
+            Defines how and when the work should be executed. Each work must have a work request for scheduling.
+            
+            - `OneTimeWorkRequest`**:** Basically used for a one-time execution of a task. For non-repeating tasks
+            
+            ```kotlin
+            val uploadWorker = OneTimeWorkRequestBuilder<UploadLogsWorker>()
+                .setConstraints(constraints)
+                .build()
+            ```
+            
+            - `PeriodicWorkRequest`**:** Where a task needs to be executed on a recurring basis. For repeating tasks
+            
+            ```kotlin
+            
+            // Create periodic worker with 10 hours interval
+            val uploadWorker = PeriodicWorkRequest.Builder(
+                UploadLogsWorker::class.java, 10, TimeUnit.HOURS)
+                .setConstraints(constraints)
+                .build()
+            ```
+            
+        - WorkManger
+            
+            Once the work request is defined now we can schedule it with WorkManager. We call `enqueue()` ****to schedule a request
+            
+            ```kotlin
+            WorkManager.getInstance(this).enqueue(uploadWorker)
+            ```
+            
+        - WorkStatus
+            - Once the work is enqueued the only thing we need to know is the status of the work and the output.
+            - For all the work requests scheduled, WorkManager maintains a LiveData which we can get by using the tag or request-id. Tag is the string that we provide while enqueuing requests with the WorkManger.
+            
+            ```kotlin
+            //Getting work status By using request ID
+            val workInfo = WorkManager.getInstance(this).getWorkInfoByIdLiveData(uploadWorker.id)
+            
+            //Getting work status By using Tag
+            val workInfo = WorkManager.getInstance(this).getWorkInfosByTag("tag_pasted")
+            
+            ```
+            
+        - Cancelling
+            - If we want to cancel any scheduled work WorkManger provides us the flexibility to do that either by using the id of the work request or by the tag.
+            
+            ```kotlin
+            val workManager = WorkManager.getInstance(this)
+            //Cancels work with the given id if it isn't finished.
+            workManager.cancelWorkById(id)
+            
+            // Cancels all unfinished work with the given tag.
+            workManager.cancelAllWorkByTag("tag")
+            
+            //Cancels all unfinished work. By invoking cancelAllWork(),
+            // we will potentially affect other modules or libraries in our project.
+            workManager.cancelAllWork()
+            ```
+            
+        - Delayed Work
+            
+            We can delay the initial work execution using `setInitialDelay()`:
+            
+            ```kotlin
+            val myWorkRequest = OneTimeWorkRequestBuilder<MyWork>()
+                .setInitialDelay(5, TimeUnit.MINUTES)
+                .build()
+            ```
+            
+        - Retry and Backoff Policy
+            
+            When a worker returns `Result.retry()` then `WorkManger` will reschedule the work based on backoff criteria. The backoff criteria are defined by two properties
+            
+            - `BackoffDelay` ****specifies the minimum amount to wait before retrying the work. Defaults to 10 seconds
+            - `BackoffPolicy` defines how the backoff delay should increase over time for subsequent retry attempts. WorkManager supports 2 backoff policies, `[LINEAR](https://developer.android.com/reference/androidx/work/BackoffPolicy#LINEAR)` and `[EXPONENTIAL](https://developer.android.com/reference/androidx/work/BackoffPolicy#EXPONENTIAL)`. Backoff policy by default is exponential, but can be set to linear.
+            
+            ```kotlin
+            val uploadWorkeRequest = OneTimeWorkRequestBuilder<UploadLogsWorker>()
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    MIN_BACKOFF_MILLIS,
+                    TimeUnit.MILLISECONDS)
+                .build()
+            ```
+            
+        - Chaining
+            - We can easily chain multiple requests through WorkManager.
+            - Let's suppose we have three requests to be executed at the start parallelly and the next requests should be executed once the first three requests are successfully completed then we can specify them as below using `begin` and `then`
+            
+            ```kotlin
+            WorkManager.getInstance(this)
+            .beginWith(Arrays.asList(workRequest1,workRequest2, workRequest3))
+            .then(workRequest4)
+            .then(workRequest5)
+            .enqueue()
+            ```
+            
+            - *Note: The begin and then methods take `OneTimeWorkRequests` ****and ****if any work in the chain fails or is cancelled, all of its dependent work inherits that state and will never run.*
+        - How is work guranteed with work manager?
+            - When we enqueue a work with WorkManger an internal TaskExecutor saves our `WorkRequest` info to the WorkManager database.
+            - After the request is saved whenever the constraints are met the Internal TaskExecutor uses `WorkerFactory` to create a `Worker` .
+            - We can customize the worker factory. Once the worker is created it gets executed in an executor
+            
+            ![https://miro.medium.com/max/541/1*-r6dTUdIN3FG_h2RpN8YLw.png](https://miro.medium.com/max/541/1*-r6dTUdIN3FG_h2RpN8YLw.png)
+            
+            ![https://miro.medium.com/max/875/1*4yL7HDWB8xQtjdrOaTPLnQ.png](https://miro.medium.com/max/875/1*4yL7HDWB8xQtjdrOaTPLnQ.png)
+            
+        - LifeCycler of One Time Request
+            - As we can see the initial state will be either blocked or mostly enqueued depending on the state of WorkManager.
+            - It enters into a running state once the execution of workers is started. From running state it mostly should result in either success or failure. But there might be cases where we want to retry or cancel the ongoing request based on the requirement.
+            
+            ![https://miro.medium.com/max/875/1*nzZ-7H_q2v8w1vI1DQJ47Q.png](https://miro.medium.com/max/875/1*nzZ-7H_q2v8w1vI1DQJ47Q.png)
+            
+        - Lifecycle of periodic requests
+            - In most cases, it’s similar to a one-time request but the only change is even if the request is successfully executed it will be enqueued again based on the interval we have provided.
+            
+            ![https://miro.medium.com/max/875/1*TP5H7PX4q1XtKqF_4Wh09Q.png](https://miro.medium.com/max/875/1*TP5H7PX4q1XtKqF_4Wh09Q.png)
+            
+    
+    ---
     
     Work Manager is a library part of Android Jetpack which makes it easy to schedule deferrable, asynchronous tasks that are expected to run even if the app exits or device restarts i.e. even your app restarts due to any issue Work Manager makes sure the scheduled task executes again.
     
@@ -1528,7 +1494,6 @@
         WorkManager.getInstance(context).enqueue(yourWorkRequest)
         ```
         
-- What is Object?
 - What is the difference between member variable and variable created inside a method?
     
     Local variable:- 
@@ -1545,7 +1510,7 @@
     - these are visible for all the methods, constructor,class.
     - it's has it's default value i..e 0, booleadn it is false and for object it is null.
     - Instance variables are created when an object is created with the use of the keyword 'new' and destroyed when the object is destroyed.
-- what is the defaulf value of the Sting member variable and member object ?
+- what is the default value of the Sting member variable and member object ?
     - Integers
         
         Variables of type "int" have a default value of 0.
@@ -1720,7 +1685,6 @@
     }
     ```
     
-- What is encapsulation with an example ?
 - What is a final variable ?
     - Final keywod is the non-access specfier that is used to restrict a class, variable, method. If we initialize a variable with the final keyword then we cannot modify it later.
     - Final variable → used to create constants.
@@ -1879,8 +1843,8 @@
     - After first time, if we try to instantiate the Singleton class, the new variable also points to the first instance created.
     - So whatever modifications we do to any variable inside the class through any instance, it affects the variable of the single instance created and is visible if we access that variable through any variable of that class type defined.
 - What is AAPT?
-    
-    `aapt` is about Android **resources** like `.xml` etc
+    - AAPT stands for Android Asset Packaging Tool. It is a build tool that gives the ability to developers to view, create, and update ZIP-compatible archives (zip, jar, and apk). It parses, indexes, and compiles the resources into a binary format that is optimized for the platform of Android
+    - `aapt` is about Android **resources** like `.xml` etc
     
     > AAPT stands for Android Asset Packaging Tool. The Android Asset Packaging Tool (aapt) takes your application resource files, such as the AndroidManifest.xml file and the XML files for your Activities, and compiles them.This is a great tool which help you to view, create, and update your APKs (as well as zip and jar files). It can also compile resources into binary assets. It is the base builder for Android aplications. This tool is a piece of the SDK (and assemble framework) and permits you to see, make, and redesign Zip-perfect chronicles (zip, jolt, apk)
     > 
@@ -1973,6 +1937,25 @@
         1. Reusability of code
         2. Ease of refactoring
         3. Ease of Testing
+        4. Helps to make dagger code easy and simple for developer
+    - Hilt-Annotation
+        1. @HiltAndroidApp → It triggers Hilt's code generation, including a base class for your application that serves as the application-level dependency container.
+        2. @AndoirdEntryPoint → Hilt provides dependencies to other android classes that have this annotation. This component can recieve dependencies from their respective parent classes.
+        3. @Inject to obtain dependencies from a component use this annotation to perform field injection.
+        4. @Module → it informs hilt how to provide instances of certain types.
+        5. @InstallIn → To tell hilt which andriod class each module will be used or installed in.
+        6. @Provides → 
+            1. This function tells hilt what type of instances this fuctions provides.
+            2. function body tells hilt how to provide an instance of the corresponding type.
+        7. @Singleton → We are providing this annotation states the result that whenever the componet needs to provide an instance of `ApiClientServic` it provides the same instance everytime. 
+    - Understanding Dagger
+        1. @Module → it’s a provider of dependency and using this annotation will make dagger understand that this is a module.
+        2. @HiltAndroidApp → it generates all the component classes which we have to do manually using Dagger.
+        3. @Inject  → it will helping passing the dependency required class in the constructor itself.
+        4. @Provide → To inject everything into the constructor we use this annotation and we also provide dependencies using this annotation and which would be accessed across the application.
+        5. @InstallIn → this annotation is to install it in SingletonComponent. SingletonComponent is provided by Dagger-Hilt.
+        6. @Singleton → helps the instance to be created and used once across the app.
+        7. @AndroidEntryPoint → to make any Android Class supported by Dagger-Hilt we use this annotation. means dagger can now inject dependencies in this class.
 - Project Structure of Android Application?
     - Module
         
@@ -2070,8 +2053,14 @@
         ```
         
 - App  Manifest Overview?
-    
-    Manifest file describe the essential information about your app to the android build tools, Android operating system and Google play
+    - Manifest file describe the essential information about your app to the android build tools, Android operating system and Google play
+    - The AndroidManifest.xml file contains information regarding the application that the Android system must know before the codes can be executed.
+    - This file is essential in every Android application.
+    - It is declared in the root directory.
+    - This file performs several tasks such as:
+        - Providing a unique name to the java package.
+        - Describing various components of the application such as activity, services, and many more.
+        - Defining the classes which will implement these components
     
     File Features:- 
     
@@ -2343,9 +2332,6 @@
 - What is the difference between Dialog and Dialog fragment?
     - **Dialog:** A dialog is a small window that prompts the user to make a decision or enter additional information.
     - **DialogFragment:** A DialogFragment is a special fragment subclass that is designed for creating and hosting dialogs. It allows the FragmentManager to manage the state of the dialog and automatically restore the dialog when a configuration change occurs.
-
----
-
 - Intents
     - What are Intents?
         
@@ -3361,3 +3347,328 @@
 - Difference between setValue() and postValue()
     - SetValue() → Sets the value. If there are active observers, the value will be dispatched to them. This method must be called from the main thread.
     - PostValue() →
+- **[I want to build one feature in my app where a user performs a long press on a contact it will show option like make Call and send SMS. How we can do that.](https://www.knowledgehut.com/interview-questions/android#collapse-beginner-3470)sav**
+    
+    In android application when user long press on any content it will show an option to perform action this can be done using Context Menu. In your scenario, if user long presses on any contact we can show him a context menu with two options “MakeCall” and “Send SMS”. Please find below code for check how to implement a Context menu in our application:
+    
+    For adding context menu in our application we need register View who is going to display data at a long press on it. We will create registerForContextMenu(View) for register view in our activity and we need to override onCreateContextMenu() in our activity for displaying option to a user when the view has been long press by the user. In our scenario, Listview is having a list of contact so we will register Listview here. When user long press on any contact it call onCreateContaxtMenu method and show option like MakeCall and SendSMS. Please find below code for more detail:
+    
+    ```
+    Listview listview  = (ListView) findViewById(R.id.listShow);
+        registerForContextMenu(listview);
+    }
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.setHeaderTitle("Context Menu");
+        menu.add(0, v.getId(), 0, "Make Call");
+        menu.add(0, v.getId(), 0, "Send SMS");
+    ```
+    
+- What are the different software components of Android Jetpack?
+    
+    The software components of Android Jetpack has been divided into 4 categories:
+    
+    - **Foundation Components:** AppCompat, Android KTX, Test, Multidex
+    - **Architecture Components:** Room, WorkManager, Lifecycle, ViewModel, Paging, Navigation
+    - **Behavior Components:** DownloadManager, Permissions, Sharing, Slices
+    - **UI Components:** Animation & Transition, Auto, Fragment, Palette, Layout
+- What’s Retrofit in Android?
+    
+    Retrofit is a type-safe REST client build by square for Android and Java which intends to make it simpler to expand RESTful web services. Retrofit uses OkHttp as the system’s administration layer and is based on it. Retrofit naturally serializes the JSON reaction utilizing a POJO (PlainOldJavaObject) which must be characterized in cutting edge for the JSON Structure. To serialize JSON we require a converter to change over it into Gson first. Retrofit is much simpler than other libraries we don’t have to parse our JSON it directly returns objects but there is one disadvantage also it doesn’t provide support to load images from the server, but we can use Picasso for the same.
+    
+    so Basically it used to call the api website and convert the result into the POJO class through Seralizable 
+    
+- Camera
+    - Writing Camera apps is Hard
+        1. Difficult to master Camera2 API
+        2. Inconsistency across devices
+        3. Difficult to scale on-device testing (as cannot testit in every device it’s costly and time consuming).
+    - Camerx makes it easy
+        - Easier to implement
+            - use case based approach
+                - Preview → used to display the camera preview
+                - ImageCapture → it’s for high quality still image for capture
+                - ImageAnalysis → it’s for fame buffer across for analysis like object detection
+            - PreviewView → to handle the complexity of the preview transfrom for you.
+        - Consistent behavior across 94% of Android devices starting from API 21
+        - Google conducts 24/7 on-device testing across a range of devices & API
+- Alarm Manager
+- How does Room Works Internally ?
+    - Advantages of Using Room
+        1. Compile-time verification of queries
+        2. Reduces boilerplate code.
+        3. Easy to understand and use.
+        4. Easy integration with RxJava, LiveData and Kotlin Coroutines.
+    - Components of Room
+        1. Database → Contains the database holder and serves as the main access point for the underlying connection to your app’s persisted, relational data.
+        2. Entity → Represents a table within the database.
+        3. Dao → Contains the methods used for accessing the database.
+    - Working
+        
+        Your application uses the **Room database** to get the **data access objects**, or **DAOs**, associated with your **database**. The app then uses each **DAO** to get **entities** from the **database** and save any changes to those **entities** back to the **database**. Finally, the app uses an **entity** to get and set values that correspond to table columns within the **database**.
+        
+    - Annotations
+        1. @Database → 
+- What is ADB?
+    
+    Android Debug Bridge is a command-line tool used to allow and control communication with an emulator instance. It gives the power for developers to execute remote shell commands to run applications on an emulator
+    
+- What is AIDL ? Which data types are supported by AIDL?
+    
+    AIDL(Android Interface Definition Language) is a tool that handles the interface requirements between a client and a service for interprocess communication(IPC) to communicate at the same level.
+    
+    The process involves dividing an object into primitives that are understood by the Android operating system. Data Types supported by AIDL is as follows:
+    
+    - String
+    - List
+    - Map
+    - CharSequence
+    - Java data types (int, long, char, and boolean)
+- Provide some tips to reduce battery usage in an android application?
+    - **Reduce network calls** as much as you can: Cache your data and retrieve it from the cache when required next time.
+    - **Avoid wake lock as much as possible**: A wake lock is a mechanism to indicate that your application needs to have the device stay on.
+    - **Use AlarmManager carefully**: Wrong use of AlarmManager can easily drain the battery.
+    - **Batch the network calls**: You should batch the network calls if possible so that you can prevent the device from waking every second.
+    - **A Different logic for Mobile Data and Wifi**: You should write different logic for mobile data and wifi as one logic may be optimized for mobile data and other may be optimized for wifi.
+    - **Check all background processes**: You should check all the background processes.
+    - **Use GPS carefully**: Do not use it frequently, use it only when actually required.
+    - **Use JobScheduler**: This is an API for scheduling various types of jobs against the framework that will be executed in your application’s own process. The framework will be intelligent about when you receive your callbacks and attempt to batch and defer them as much as possible.
+- Explain the build Process in Android?
+    1. First step involves compiling the resources folder (/res) using the aapt (android asset packaging tool) tool. These are compiled to a single class file called R.java. This is a class that just contains constants.
+    2. Second step involves the java source code being compiled to .class files by javac, and then the class files are converted to Dalvik bytecode by the “dx” tool, which is included in the sdk ‘tools’. The output is classes.dex.
+    3. The final step involves the android apkbuilder which takes all the input and builds the apk (android packaging key) file.
+- How to persist data in an Android app?
+    1. Shared Preferences - to save primitive data in key-value pairs
+    2. Internal Storage - you need to store data to the device filesystem, but you do not want any other app (even the user) to read this data
+    3. External Storage - you might want the user to view the files and data saved by your app
+    4. SQLite database
+- What is Dalvik?
+    - Dalvik is a Just in Time Compiler **(JIT)**
+    - By the term JIT, we mean to say that whenever you run your app in your mobile device then that part of your code that is needed for execution of your app will only be compiled at that moment and rest of the code will be compiled in the future when needed.
+    - The JIT or Just In Time compiles only a part of your code and it has a smaller memory footprint and due to this, it uses very less physical space on your device.
+- What is vector?
+    - Vector is a wrapper over an array, where in the array can grow in size, or reduce in size dynamically, without the developer having to manage the size.
+    - Vector is synchronized, so it is a thread safe construct to use.
+- Difference betweeen lateinit and lazy?
+    - **lateinit property**
+        
+        lateinit properties are the var properties that can be initialised later in the constructor or in any function acording to the use.
+        
+        ```kotlin
+        data class User (val id : Long,
+                         val username : String) : Serializable
+        
+        lateinit var lateinitUser : User
+        ```
+        
+    - **lazy property**
+        
+        lazy properties are the val properties that can also be initialised later when they are called the first time.
+        
+        ```kotlin
+        val lazyUser : User? bylazy {
+                User(id = 1, username = "agrawalsuneet")
+            }
+        ```
+        
+    - **lateinit var whereas lazy val**
+        
+        lateinit can only be used with a var property whereas lazy will always be used with val property. A lateinit property can be reinitialised again and again as per the use whereas the lazy property can only be initialised once.
+        
+        ```kotlin
+        lateinitvar lateinitUser : User
+        
+        val lazyUser : User? by lazy {
+                User(id = 1, username = "agrawalsuneet")
+            }
+        ```
+        
+    - **lateinit can't have custom getter or setter whereas lazy has custom getter**
+        
+        A lateinit property can't have a custom getter whereas a lazy property has a block that gets executed whenever the first time that property is called.
+        
+        ```kotlin
+        
+        val lazyUser : User bylazy {
+                //can do other initialisation here
+                User(id = 1, username = "agrawalsuneet")
+            }
+        
+        ```
+        
+    - **isInitialized**
+        
+        In order to check if a lateinit property is initialised or not, we can use the extension function to KProperty directly which returns a boolean if the property is initialised or not.
+        
+        ```kotlin
+        
+        /**
+         * Returns `true` if this lateinit property has been assigned a value, and `false` otherwise.
+         *
+         * Cannot be used in an inline function, to avoid binary compatibility issues.
+         */
+        @SinceKotlin("1.2")
+        @InlineOnly
+        inline val @receiver:AccessibleLateinitPropertyLiteral KProperty0<*>.isInitialized: Boolean
+            get() = throw NotImplementedError("Implementation is intrinsic")
+        
+        println(::lateinitUser.isInitialized)
+        
+        ```
+        
+        Since the lazy block returns an object which implements the Lazy interface, we can check if the variable is initialised or not in the case of the lazy property also but for that, we need to split the lazy call.
+        
+        ```kotlin
+        
+        val lazyUserDelegate = lazy { User(id = 1, username = "agrawalsuneet") }
+        val lazyUser by lazyUserDelegate
+        
+        println(lazyUserDelegate.isInitialized())
+        
+        ```
+        
+    - **Primitive types**
+        
+        lateinit properties can't be of primitive data types whereas lazy properties can be of primitive date types also.
+        
+        ```kotlin
+        
+        lateinit var lateinitInt : Int //compilation error: 'lateinit' modifier is not allowed on properties of primitive types
+        
+        val lazyInt by lazy {
+            10
+        }
+        ```
+        
+    - **Thread Safety**
+        
+        We can't define the thready safety in case of lateinit property but in case of lazy, we can choose between SYNCHRONIZED, PUBLICATION and NONE.
+        
+        ```kotlin
+        
+        val lazyUser : User? by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+                User(id = 1, username = "agrawalsuneet")
+            }
+        ```
+        
+    - **Nullable Type**
+        
+        A lazy property can be of nullable type but a lateinit property can't be of nullable type.
+        
+        ```kotlin
+        lateinit var lateinitUser : User? //compilation error: 'lateinit' modifier is not allowed on properties of nullable types
+        
+        val lazyUser : User? by lazy {
+                User(id = 1, username = "agrawalsuneet")
+            }
+        ```
+        
+- Doze Mode?
+    
+    Doze mode is basically a state that intends to extend battery life by deferring app background CPU and network activity when a device is in an idle state for a long period of time. Here we have a maintenance window during which apps can complete pending works.
+    
+- What is the difference between FLAG_ACTIVITY_CLEAR_TASK and FLAG_ACTIVITY_CLEAR_TOP?
+    - **FLAG_ACTIVITY_CLEAR_TASK** is used to clear all the activities from the task including any existing instances of the class invoked. The Activity launched by intent becomes the new root of the otherwise empty task list. This flag has to be used in conjunction with FLAG_ ACTIVITY_NEW_TASK.
+    - **FLAG_ACTIVITY_CLEAR_TOP** on the other hand, if set and if an old instance of this Activity exists in the task list then barring that all the other activities are removed and that old activity becomes the root of the task list. Else if there’s no instance of that activity then a new instance of it is made the root of the task list. Using FLAG_ACTIVITY_NEW_TASK in conjunction is a good practice, though not necessary.
+- Difference between Service, Intent Service, AsyncTask & Threads
+    - **Android service** is a component that is used to perform operations on the background such as playing music. It doesn’t has any UI (user interface). The service runs in the background indefinitely even if application is destroyed.
+    - **AsyncTask** allows you to perform asynchronous work on your user interface. It performs the blocking operations in a worker thread and then publishes the results on the UI thread, without requiring you to handle threads and/or handlers yourself.
+    - **IntentService** is a base class for Services that handle asynchronous requests (expressed as Intents) on demand. Clients send requests through startService(Intent) calls; the service is started as needed, handles each Intent in turn using a worker thread, and stops itself when it runs out of work.
+    - A **thread** is a single sequential flow of control within a program. Threads can be thought of as mini-processes running within a main process.
+- Fragment & Activity Difference?
+- Exception
+    - An exception is an unexpected event, which occurs during the exception of a program i.e run time, that disrupts the normal flow of the program’s instruction.
+    - **How JVM Handles the Exceptions?**
+        
+        Whenever inside a method, if an exception has occurred, the method creates an Object known as Exception Object and hands it off to the run-time system(JVM). The exception object contains name and description of the exception, and current state of the program where exception has occurred. Creating the Exception Object and handling it to the run-time system is called throwing an Exception.There might be the list of the methods that had been called to get to the method where exception was occurred. This ordered list of the methods is called **Call Stack**.Now the following procedure will happen.
+        
+        - The run-time system searches the call stack to find the method that contains block of code that can handle the occurred exception. The block of the code is called **Exception handler**.
+        - The run-time system starts searching from the method in which exception occurred, proceeds through call stack in the reverse order in which methods were called.
+        - If it finds appropriate handler then it passes the occurred exception to it. Appropriate handler means the type of the exception object thrown matches the type of the exception object it can handle.
+        - If run-time system searches all the methods on call stack and couldn’t have found the appropriate handler then run-time system handover the Exception Object to **default exception handler** , which is part of run-time system. This handler prints the exception information in the following format and terminates program **abnormally**.
+            
+            ```java
+            Exception in thread "xxx" Name of Exception : Description
+            ... ...... ..  // Call Stack
+            
+            ```
+            
+        
+        See the below diagram to understand the flow of the call stack.
+        
+        ![https://media.geeksforgeeks.org/wp-content/cdn-uploads/call-stack.png](https://media.geeksforgeeks.org/wp-content/cdn-uploads/call-stack.png)
+        
+- Difference Between Error and Exception?
+    
+    **Error:**
+    
+    An Error indicates serious problem that a reasonable application should not try to catch.
+    
+    **Exception:**
+    
+    Exception indicates conditions that a reasonable application might try to catch.
+    
+- What is the difference betweeen final, finally and finalize?
+    - Final → It is an access modifier
+    - Finally → is the block in the exception handing
+    - Finalize → is the method of object class.
+- Types of References in java?
+    
+    There are 4 types of references in Java
+    
+    - Strong Reference → It is the default type of reference object. An object that has active strong reference can’t be garbage collected. It is possible only if the variable that is strongly referenced points to null. Let us see an example −
+    
+    ## **Example**
+    
+    ```java
+    class Demo {
+       //Some functionality
+    }
+    public class Demo_example{
+       public static void main(String[] args){
+          Demo my_inst = new Demo();
+          my_inst = null;
+       }
+    }
+    ```
+    
+    - Weak Reference → They are not default class of reference object, hence need to be explicitly specified. It is generally used with WeakHashmap, so as to reference entry objects. Such weak references are marked for garbage collection by the Java Virtual Machine. Such references are created using the ‘java.lang.ref.WeakReference’ class.
+    
+    Let us see an example −
+    
+    ## **Example**
+    
+    [Live Demo](http://tpcg.io/7VS69hlE)
+    
+    ```
+    import java.lang.ref.WeakReference;
+    class Demo{
+       public void display_msg(){
+          System.out.println("Hello");
+       }
+    }
+    public class Demo_sample{
+       public static void main(String[] args){
+          Demo inst = new Demo();
+          inst.display_msg();
+          WeakReference<Demo> my_weak_ref = new WeakReference<Demo>(inst);
+          inst = null;
+          inst = my_weak_ref.get();
+          inst.display_msg();
+    }
+    ```
+    
+    ## **Output**
+    
+    ```
+    Hello
+    Hello
+    ```
+    
+    A class named Demo has a function named ‘display_msg’. This function displays a relevant message. In another class named ‘Demo_sample’, the main function is defined, and an instance of Demo class is created. The ‘display_msg’ function is called on the instance. A weakReference to the Demo class is created, and the Demo insatne is assigned to null, and the function is called on it again. The relevant output is displayed on the console.
+    
+    ![https://www.tutorialspoint.com/assets/profiles/123055/profile/60_187394-1565938756.jpg](https://www.tutorialspoint.com/assets/profiles/123055/profile/60_187394-1565938756.jpg)    
+    - Soft References
+    - Phantom References
+- Interface vs Abstract class?
