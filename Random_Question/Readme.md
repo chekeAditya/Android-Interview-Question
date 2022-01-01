@@ -3667,8 +3667,6 @@
     ```
     
     A class named Demo has a function named ‘display_msg’. This function displays a relevant message. In another class named ‘Demo_sample’, the main function is defined, and an instance of Demo class is created. The ‘display_msg’ function is called on the instance. A weakReference to the Demo class is created, and the Demo insatne is assigned to null, and the function is called on it again. The relevant output is displayed on the console.
-    
-    ![https://www.tutorialspoint.com/assets/profiles/123055/profile/60_187394-1565938756.jpg](https://www.tutorialspoint.com/assets/profiles/123055/profile/60_187394-1565938756.jpg)    
     - Soft References
     - Phantom References
 - Interface vs Abstract class?
